@@ -97,6 +97,11 @@ body {
   pointer-events: none;
   z-index: 6;
 }
+#ember-canvas {
+  opacity: 0;
+  transition: opacity 3s ease;
+}
+#ember-canvas.visible { opacity: 1; }
 #lightning-canvas { z-index: 7; }
 
 /* ===== AMBIENT GLOW ===== */
@@ -873,6 +878,10 @@ window.addEventListener('load', () => {
     document.getElementById('loader').classList.add('hidden');
     document.querySelectorAll('.ambient-glow').forEach(g => g.classList.add('active'));
   }, 800);
+  // Fade in embers after logo finishes animating
+  setTimeout(() => {
+    document.getElementById('ember-canvas').classList.add('visible');
+  }, 4500);
 });
 
 // ===== SCROLL REVEAL =====

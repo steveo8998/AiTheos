@@ -1307,13 +1307,24 @@ class AmbientAudio {
 const ambientAudio = new AmbientAudio();
 const soundBtn = document.getElementById('sound-toggle');
 
-soundBtn.addEventListener('click', handleSoundToggle);
-soundBtn.addEventListener('touchend', function(e) {
-  e.preventDefault();
-  handleSoundToggle();
+// ===== AUTO FADE AUDIO AT REGISTRY SECTION =====
+const registrySection = document.querySelector('.registry');
+const registryObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && ambientAudio.isPlaying) {
+      ambientAudio.stop();
+    }
+  });
+}, {
+  threshold: 0.3
 });
+registryObserver.observe(registrySection);
+function handleSoundToggle(e) {
+  if (e) e.preventDefault();
+  if (soundHandled) return;
+  soundHandled = true;
+  setTimeout(() => { soundHandled = false; }, 300);
 
-function handleSoundToggle() {
   const playing = ambientAudio.toggle();
   soundBtn.classList.toggle('active', playing);
   soundBtn.querySelector('.label').textContent = playing ? 'Sound On' : 'Sound';
@@ -1323,6 +1334,8 @@ function handleSoundToggle() {
     }, 1500);
   }
 }
+soundBtn.addEventListener('click', handleSoundToggle);
+soundBtn.addEventListener('touchend', handleSoundToggle);
 </script>
 
 </body>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AiTheos — The Gods Are Coming</title>
 <meta name="description" content="A lost knowledge is returning. The Gods are coming… and there are many.">
 <meta property="og:title" content="AiTheos — The Gods Are Coming">
@@ -48,6 +48,7 @@ body {
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 ::selection {
@@ -158,26 +159,7 @@ body {
   100% { transform: translate(0, 0); }
 }
 
-/* ===== SCROLL LINE ===== */
-.scroll-line {
-  position: fixed;
-  right: 20px;
-  top: 0;
-  width: 1px;
-  height: 100vh;
-  z-index: 10;
-  background: var(--text-faint);
-}
-.scroll-line::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: var(--scroll-progress, 0%);
-  background: linear-gradient(to bottom, var(--gold-dim), var(--gold));
-  transition: height 0.1s linear;
-}
+/* scroll line removed */
 
 /* ===== MAIN CONTENT ===== */
 main {
@@ -590,7 +572,6 @@ main {
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
-  .scroll-line { right: 10px; }
   .sound-toggle { top: 12px; right: 12px; padding: 0.5rem 0.8rem; font-size: 0.55rem; }
   .narrative-section { min-height: 80vh; padding: 3rem 1.5rem; }
   .narrative-text { line-height: 1.9; }
@@ -606,6 +587,103 @@ main {
     100% { opacity: 1; letter-spacing: 0.2em; filter: blur(0); }
   }
   .hero-subtitle { letter-spacing: 0.3em; }
+}
+
+/* ===== SAMSUNG FOLD — COVER SCREEN (very narrow, ~320-400px wide) ===== */
+@media (max-width: 400px) {
+  .logotype {
+    font-size: clamp(1.6rem, 8vw, 2.2rem);
+    letter-spacing: 0.12em;
+    padding-right: 0.12em;
+  }
+  @keyframes logoReveal {
+    0% { opacity: 0; letter-spacing: 0.4em; filter: blur(6px); }
+    100% { opacity: 1; letter-spacing: 0.12em; filter: blur(0); }
+  }
+  .hero-subtitle {
+    font-size: 0.55rem;
+    letter-spacing: 0.25em;
+  }
+  .narrative-text {
+    font-size: 1rem;
+    line-height: 1.85;
+  }
+  .proc-main {
+    font-size: clamp(1.2rem, 5vw, 1.8rem);
+  }
+  .proc-sub {
+    font-size: 0.95rem;
+  }
+  .registry-heading {
+    font-size: 1.1rem;
+    letter-spacing: 0.05em;
+  }
+  .registry-sub {
+    font-size: 0.85rem;
+  }
+  .email-input {
+    padding: 0.85rem 1rem;
+    font-size: 0.8rem;
+  }
+  .submit-btn {
+    padding: 0.85rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+  }
+  .narrative-section {
+    min-height: 70vh;
+    padding: 2.5rem 1.2rem;
+  }
+  .proclamation {
+    min-height: 70vh;
+  }
+  .separator .line { width: 40px; }
+  .sound-toggle {
+    top: 8px;
+    right: 8px;
+    padding: 0.45rem 0.6rem;
+    font-size: 0.5rem;
+  }
+}
+
+/* ===== SAMSUNG FOLD — INNER SCREEN (near-square tablet, ~700-900px wide) ===== */
+@media (min-width: 700px) and (max-width: 900px) and (min-height: 800px) {
+  .hero { min-height: 100vh; }
+  .logotype {
+    font-size: 3rem;
+    letter-spacing: 0.3em;
+    padding-right: 0.3em;
+  }
+  .hero-subtitle {
+    font-size: 0.8rem;
+  }
+  .narrative-text {
+    font-size: 1.4rem;
+    line-height: 2;
+    max-width: 580px;
+  }
+  .narrative-section {
+    min-height: 70vh;
+  }
+  .proc-main {
+    font-size: 2.6rem;
+  }
+  .proclamation {
+    min-height: 70vh;
+  }
+  .email-form {
+    max-width: 380px;
+  }
+}
+
+/* ===== LANDSCAPE / WIDE SHORT SCREENS ===== */
+@media (max-height: 500px) and (orientation: landscape) {
+  .hero { min-height: 100vh; padding: 1.5rem; }
+  .hero-line { margin-bottom: 1.5rem; }
+  .narrative-section { min-height: 100vh; padding: 2rem 1.5rem; }
+  .proclamation { min-height: 100vh; }
+  .registry { min-height: 100vh; }
+  .scroll-indicator { display: none; }
 }
 
 /* ===== REDUCED MOTION ===== */
@@ -640,9 +718,6 @@ main {
 <!-- Vignette + Grain -->
 <div class="vignette"></div>
 <div class="grain"></div>
-
-<!-- Scroll Progress -->
-<div class="scroll-line"></div>
 
 <!-- Main Content -->
 <main>
@@ -796,15 +871,6 @@ window.addEventListener('load', () => {
   }, 800);
 });
 
-// ===== SCROLL PROGRESS =====
-const scrollLine = document.querySelector('.scroll-line');
-window.addEventListener('scroll', () => {
-  const scrollTop = window.scrollY;
-  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-  const progress = (scrollTop / docHeight) * 100;
-  scrollLine.style.setProperty('--scroll-progress', progress + '%');
-}, { passive: true });
-
 // ===== SCROLL REVEAL =====
 const reveals = document.querySelectorAll('.reveal');
 const revealObserver = new IntersectionObserver((entries) => {
@@ -829,7 +895,19 @@ function resizeEmberCanvas() {
   emberCanvas.height = window.innerHeight;
 }
 resizeEmberCanvas();
-window.addEventListener('resize', resizeEmberCanvas);
+window.addEventListener('resize', () => {
+  resizeEmberCanvas();
+  // Adjust ember count on fold/unfold
+  const targetCount = window.innerWidth < 400 ? 15 : (window.innerWidth < 768 ? 25 : 55);
+  while (embers.length < targetCount) {
+    const e = new Ember();
+    e.y = Math.random() * emberCanvas.height;
+    embers.push(e);
+  }
+  while (embers.length > targetCount) {
+    embers.pop();
+  }
+});
 
 class Ember {
   constructor() { this.reset(); }
@@ -873,7 +951,8 @@ class Ember {
 }
 
 const isMobile = window.innerWidth < 768;
-const emberCount = isMobile ? 25 : 55;
+const isNarrow = window.innerWidth < 400;
+const emberCount = isNarrow ? 15 : (isMobile ? 25 : 55);
 for (let i = 0; i < emberCount; i++) {
   const e = new Ember();
   e.y = Math.random() * emberCanvas.height;
@@ -1024,67 +1103,74 @@ window.addEventListener('scroll', () => {
   }
 }, { passive: true });
 
-// ===== PROCEDURAL AMBIENT AUDIO =====
+// ===== PROCEDURAL AMBIENT AUDIO (iOS Safari Compatible) =====
 class AmbientAudio {
   constructor() {
     this.ctx = null;
     this.isPlaying = false;
     this.masterGain = null;
-    this.rainGain = null;
+    this.nodes = [];
     this.thunderTimeout = null;
   }
 
-  init() {
-    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+  start() {
+    // Create AudioContext inside user gesture (required for iOS)
+    if (!this.ctx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      this.ctx = new AC();
+    }
+
+    // iOS requires resume() called within user gesture
+    const resumeAndPlay = () => {
+      if (this.ctx.state === 'suspended') {
+        this.ctx.resume().then(() => this._beginPlayback());
+      } else {
+        this._beginPlayback();
+      }
+    };
+
+    resumeAndPlay();
+  }
+
+  _beginPlayback() {
+    if (this.isPlaying) return;
+    this.isPlaying = true;
+
     this.masterGain = this.ctx.createGain();
     this.masterGain.gain.value = 0;
     this.masterGain.connect(this.ctx.destination);
-  }
 
-  createRain() {
-    // Rain = filtered noise
-    const bufferSize = 2 * this.ctx.sampleRate;
-    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-    const data = buffer.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      data[i] = Math.random() * 2 - 1;
-    }
+    // === RAIN LAYER 1: High patter ===
+    const rainBuf1 = this._createNoiseBuffer(2);
+    const rain1 = this.ctx.createBufferSource();
+    rain1.buffer = rainBuf1;
+    rain1.loop = true;
 
-    const noise = this.ctx.createBufferSource();
-    noise.buffer = buffer;
-    noise.loop = true;
+    const hp = this.ctx.createBiquadFilter();
+    hp.type = 'highpass';
+    hp.frequency.value = 4000;
+    hp.Q.value = 0.5;
 
-    // Highpass to shape rain character
-    const highpass = this.ctx.createBiquadFilter();
-    highpass.type = 'highpass';
-    highpass.frequency.value = 4000;
-    highpass.Q.value = 0.5;
+    const bp = this.ctx.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.frequency.value = 7000;
+    bp.Q.value = 0.7;
 
-    // Bandpass for body
-    const bandpass = this.ctx.createBiquadFilter();
-    bandpass.type = 'bandpass';
-    bandpass.frequency.value = 7000;
-    bandpass.Q.value = 0.7;
+    const rainGain1 = this.ctx.createGain();
+    rainGain1.gain.value = 0.08;
 
-    // Rain volume
-    this.rainGain = this.ctx.createGain();
-    this.rainGain.gain.value = 0.08;
+    rain1.connect(hp);
+    hp.connect(bp);
+    bp.connect(rainGain1);
+    rainGain1.connect(this.masterGain);
+    rain1.start(0);
+    this.nodes.push(rain1);
 
-    noise.connect(highpass);
-    highpass.connect(bandpass);
-    bandpass.connect(this.rainGain);
-    this.rainGain.connect(this.masterGain);
-    noise.start();
-
-    // Second layer — deeper rain patter
-    const buffer2 = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-    const data2 = buffer2.getChannelData(0);
-    for (let i = 0; i < bufferSize; i++) {
-      data2[i] = Math.random() * 2 - 1;
-    }
-    const noise2 = this.ctx.createBufferSource();
-    noise2.buffer = buffer2;
-    noise2.loop = true;
+    // === RAIN LAYER 2: Deep body ===
+    const rainBuf2 = this._createNoiseBuffer(2);
+    const rain2 = this.ctx.createBufferSource();
+    rain2.buffer = rainBuf2;
+    rain2.loop = true;
 
     const lp = this.ctx.createBiquadFilter();
     lp.type = 'lowpass';
@@ -1093,18 +1179,35 @@ class AmbientAudio {
     const rainGain2 = this.ctx.createGain();
     rainGain2.gain.value = 0.03;
 
-    noise2.connect(lp);
+    rain2.connect(lp);
     lp.connect(rainGain2);
     rainGain2.connect(this.masterGain);
-    noise2.start();
+    rain2.start(0);
+    this.nodes.push(rain2);
 
-    this.rainNodes = [noise, noise2];
+    // Fade in
+    this.masterGain.gain.setValueAtTime(0, this.ctx.currentTime);
+    this.masterGain.gain.linearRampToValueAtTime(1, this.ctx.currentTime + 3);
+
+    // Schedule thunder
+    this.thunderTimeout = setTimeout(() => this.triggerThunder(), 2000 + Math.random() * 3000);
+  }
+
+  _createNoiseBuffer(seconds) {
+    const length = seconds * this.ctx.sampleRate;
+    const buffer = this.ctx.createBuffer(1, length, this.ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < length; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+    return buffer;
   }
 
   triggerThunder() {
     if (!this.isPlaying || !this.ctx) return;
 
     const now = this.ctx.currentTime;
+    const rumbleLen = 4 + Math.random() * 3;
 
     // Low rumble oscillator
     const osc = this.ctx.createOscillator();
@@ -1112,39 +1215,37 @@ class AmbientAudio {
     osc.frequency.setValueAtTime(40 + Math.random() * 20, now);
     osc.frequency.exponentialRampToValueAtTime(20, now + 2.5);
 
-    // Noise burst for crack
-    const crackLen = 0.3;
-    const crackBuffer = this.ctx.createBuffer(1, crackLen * this.ctx.sampleRate, this.ctx.sampleRate);
-    const crackData = crackBuffer.getChannelData(0);
+    // Crack noise burst
+    const crackBuf = this._createNoiseBuffer(0.3);
+    const crackData = crackBuf.getChannelData(0);
     for (let i = 0; i < crackData.length; i++) {
-      crackData[i] = (Math.random() * 2 - 1) * Math.exp(-i / (crackData.length * 0.1));
+      crackData[i] *= Math.exp(-i / (crackData.length * 0.1));
     }
     const crack = this.ctx.createBufferSource();
-    crack.buffer = crackBuffer;
+    crack.buffer = crackBuf;
 
     // Rumble noise
-    const rumbleLen = 4 + Math.random() * 3;
-    const rumbleBuffer = this.ctx.createBuffer(1, rumbleLen * this.ctx.sampleRate, this.ctx.sampleRate);
-    const rumbleData = rumbleBuffer.getChannelData(0);
+    const rumbleBuf = this._createNoiseBuffer(rumbleLen);
+    const rumbleData = rumbleBuf.getChannelData(0);
     for (let i = 0; i < rumbleData.length; i++) {
       const t = i / rumbleData.length;
-      const envelope = Math.sin(t * Math.PI) * (1 - t * 0.5);
-      rumbleData[i] = (Math.random() * 2 - 1) * envelope;
+      rumbleData[i] *= Math.sin(t * Math.PI) * (1 - t * 0.5);
     }
     const rumble = this.ctx.createBufferSource();
-    rumble.buffer = rumbleBuffer;
+    rumble.buffer = rumbleBuf;
 
     const rumbleLp = this.ctx.createBiquadFilter();
     rumbleLp.type = 'lowpass';
     rumbleLp.frequency.value = 150;
 
-    // Gains
-    const thunderGain = this.ctx.createGain();
+    // Thunder gain envelope
     const intensity = 0.12 + Math.random() * 0.15;
+    const thunderGain = this.ctx.createGain();
     thunderGain.gain.setValueAtTime(0, now);
     thunderGain.gain.linearRampToValueAtTime(intensity, now + 0.05);
     thunderGain.gain.exponentialRampToValueAtTime(0.001, now + rumbleLen);
 
+    // Crack gain envelope
     const crackGain = this.ctx.createGain();
     crackGain.gain.setValueAtTime(intensity * 2, now);
     crackGain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
@@ -1154,7 +1255,6 @@ class AmbientAudio {
     rumble.connect(rumbleLp);
     rumbleLp.connect(thunderGain);
     crack.connect(crackGain);
-
     thunderGain.connect(this.masterGain);
     crackGain.connect(this.masterGain);
 
@@ -1163,40 +1263,29 @@ class AmbientAudio {
     rumble.start(now);
     crack.start(now);
 
-    // Schedule next thunder
+    // Next thunder
     const nextDelay = 5000 + Math.random() * 12000;
     this.thunderTimeout = setTimeout(() => this.triggerThunder(), nextDelay);
-  }
-
-  start() {
-    if (!this.ctx) this.init();
-    if (this.ctx.state === 'suspended') this.ctx.resume();
-
-    this.isPlaying = true;
-    this.createRain();
-
-    // Fade in master
-    this.masterGain.gain.setValueAtTime(0, this.ctx.currentTime);
-    this.masterGain.gain.linearRampToValueAtTime(1, this.ctx.currentTime + 3);
-
-    // First thunder after a short delay
-    this.thunderTimeout = setTimeout(() => this.triggerThunder(), 2000 + Math.random() * 3000);
   }
 
   stop() {
     if (!this.ctx || !this.isPlaying) return;
     this.isPlaying = false;
-
-    // Fade out
-    this.masterGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2);
-
     clearTimeout(this.thunderTimeout);
 
-    // Stop rain after fade
+    // Fade out
+    if (this.masterGain) {
+      this.masterGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2);
+    }
+
+    // Stop all sources after fade
     setTimeout(() => {
-      if (this.rainNodes) {
-        this.rainNodes.forEach(n => { try { n.stop(); } catch(e){} });
-        this.rainNodes = null;
+      this.nodes.forEach(n => { try { n.stop(); } catch(e){} });
+      this.nodes = [];
+      // Disconnect master but keep ctx alive for reuse
+      if (this.masterGain) {
+        this.masterGain.disconnect();
+        this.masterGain = null;
       }
     }, 2500);
   }

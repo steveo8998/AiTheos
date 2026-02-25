@@ -1307,6 +1307,14 @@ soundBtn.addEventListener('click', () => {
   const playing = ambientAudio.toggle();
   soundBtn.classList.toggle('active', playing);
   soundBtn.querySelector('.label').textContent = playing ? 'Sound On' : 'Sound';
+  if (playing) {
+    setTimeout(() => {
+      soundBtn.style.transition = 'opacity 1.5s ease, visibility 1.5s ease';
+      soundBtn.style.opacity = '0';
+      soundBtn.style.visibility = 'hidden';
+      soundBtn.style.pointerEvents = 'none';
+    }, 1500);
+  }
 });
 </script>
 

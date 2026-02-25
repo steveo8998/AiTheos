@@ -902,7 +902,7 @@ resizeEmberCanvas();
 window.addEventListener('resize', () => {
   resizeEmberCanvas();
   // Adjust ember count on fold/unfold
-  const targetCount = window.innerWidth < 400 ? 15 : (window.innerWidth < 768 ? 25 : 55);
+  const targetCount = window.innerWidth < 400 ? 30 : (window.innerWidth < 768 ? 50 : 80);
   while (embers.length < targetCount) {
     const e = new Ember();
     e.y = Math.random() * emberCanvas.height;
@@ -917,16 +917,15 @@ class Ember {
   constructor() { this.reset(); }
   reset() {
     this.x = Math.random() * emberCanvas.width;
-    this.y = emberCanvas.height + Math.random() * 100;
-    this.size = Math.random() * 2.2 + 0.3;
-    this.speedY = -(Math.random() * 0.5 + 0.1);
-    this.speedX = (Math.random() - 0.5) * 0.3;
-    this.opacity = Math.random() * 0.5 + 0.1;
-    this.fadeSpeed = Math.random() * 0.002 + 0.001;
-    this.wobbleAmp = Math.random() * 0.5;
+    this.y = emberCanvas.height + Math.random() * 50;
+    this.size = Math.random() * 3 + 0.8;
+    this.speedY = -(Math.random() * 1.2 + 0.3);
+    this.speedX = (Math.random() - 0.5) * 0.5;
+    this.opacity = Math.random() * 0.7 + 0.2;
+    this.fadeSpeed = Math.random() * 0.001 + 0.0005;
+    this.wobbleAmp = Math.random() * 0.8;
     this.wobbleFreq = Math.random() * 0.02;
     this.time = Math.random() * 1000;
-    // Most embers gold, some blue
     this.isBlue = Math.random() < 0.15;
   }
   update() {
@@ -934,7 +933,7 @@ class Ember {
     this.y += this.speedY;
     this.x += this.speedX + Math.sin(this.time * this.wobbleFreq) * this.wobbleAmp;
     this.opacity -= this.fadeSpeed;
-    if (this.opacity <= 0 || this.y < -20) this.reset();
+    if (this.opacity <= 0 || this.y < -50) this.reset();
   }
   draw() {
     ectx.save();
@@ -943,12 +942,12 @@ class Ember {
     ectx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
     if (this.isBlue) {
       ectx.fillStyle = '#4a9edd';
-      ectx.shadowColor = 'rgba(74,158,221,0.5)';
+      ectx.shadowColor = 'rgba(74,158,221,0.6)';
     } else {
       ectx.fillStyle = '#c9a84c';
-      ectx.shadowColor = 'rgba(201,168,76,0.5)';
+      ectx.shadowColor = 'rgba(201,168,76,0.6)';
     }
-    ectx.shadowBlur = this.size * 4;
+    ectx.shadowBlur = this.size * 6;
     ectx.fill();
     ectx.restore();
   }
@@ -956,7 +955,7 @@ class Ember {
 
 const isMobile = window.innerWidth < 768;
 const isNarrow = window.innerWidth < 400;
-const emberCount = isNarrow ? 15 : (isMobile ? 25 : 55);
+const emberCount = isNarrow ? 30 : (isMobile ? 50 : 80);
 for (let i = 0; i < emberCount; i++) {
   const e = new Ember();
   e.y = Math.random() * emberCanvas.height;

@@ -927,10 +927,10 @@ class Ember {
   reset() {
     this.x = Math.random() * emberCanvas.width;
     this.y = emberCanvas.height + Math.random() * 50;
-    this.size = Math.random() * 3 + 0.8;
+    this.size = Math.random() * 2.4 + 0.64;
     this.speedY = -(Math.random() * 1.2 + 0.3);
     this.speedX = (Math.random() - 0.5) * 0.5;
-    this.opacity = Math.random() * 0.7 + 0.2;
+    this.opacity = Math.random() * 0.56 + 0.16;
     this.fadeSpeed = Math.random() * 0.001 + 0.0005;
     this.wobbleAmp = Math.random() * 0.8;
     this.wobbleFreq = Math.random() * 0.02;
@@ -942,10 +942,10 @@ class Ember {
     this.y += this.speedY;
     this.x += this.speedX + Math.sin(this.time * this.wobbleFreq) * this.wobbleAmp;
     this.opacity -= this.fadeSpeed;
-    // Fade out as embers rise past bottom half of screen
+    // Fade out as embers rise past bottom third of screen
     const screenRatio = this.y / emberCanvas.height;
-    if (screenRatio < 0.5) {
-      this.opacity *= 0.92;
+    if (screenRatio < 0.55) {
+      this.opacity *= 0.88;
     }
     if (this.opacity <= 0.01 || this.y < 0) this.reset();
   }
@@ -1301,21 +1301,20 @@ class AmbientAudio {
     this.isPlaying = false;
     clearTimeout(this.thunderTimeout);
 
-    // Fade out
+    // Fade out over 7 seconds
     if (this.masterGain) {
-      this.masterGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 2);
+      this.masterGain.gain.linearRampToValueAtTime(0, this.ctx.currentTime + 7);
     }
 
-    // Stop all sources after fade
+    // Stop all sources after fade completes
     setTimeout(() => {
       this.nodes.forEach(n => { try { n.stop(); } catch(e){} });
       this.nodes = [];
-      // Disconnect master but keep ctx alive for reuse
       if (this.masterGain) {
         this.masterGain.disconnect();
         this.masterGain = null;
       }
-    }, 2500);
+    }, 7500);
   }
 
   toggle() {

@@ -942,7 +942,12 @@ class Ember {
     this.y += this.speedY;
     this.x += this.speedX + Math.sin(this.time * this.wobbleFreq) * this.wobbleAmp;
     this.opacity -= this.fadeSpeed;
-    if (this.opacity <= 0 || this.y < -50) this.reset();
+    // Fade out as embers rise past bottom half of screen
+    const screenRatio = this.y / emberCanvas.height;
+    if (screenRatio < 0.5) {
+      this.opacity *= 0.92;
+    }
+    if (this.opacity <= 0.01 || this.y < 0) this.reset();
   }
   draw() {
     ectx.save();
@@ -1107,11 +1112,22 @@ document.getElementById('registry-form').addEventListener('submit', function(e) 
 // ===== HIDE SCROLL INDICATOR ON SCROLL =====
 const scrollInd = document.querySelector('.scroll-indicator');
 let scrollHidden = false;
+let soundBtnHiddenByScroll = false;
 window.addEventListener('scroll', () => {
   if (!scrollHidden && window.scrollY > 100) {
     scrollInd.style.transition = 'opacity 0.8s ease';
     scrollInd.style.opacity = '0';
     scrollHidden = true;
+  }
+  // Hide sound toggle at 50% scroll
+  if (!soundBtnHiddenByScroll) {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    if (docHeight > 0 && (scrollTop / docHeight) >= 0.5) {
+      soundBtnHiddenByScroll = true;
+      const sb = document.getElementById('sound-toggle');
+      if (sb) sb.style.cssText += 'opacity:0 !important; visibility:hidden !important; pointer-events:none !important; transition: opacity 1s ease, visibility 1s ease !important;';
+    }
   }
 }, { passive: true });
 
@@ -1327,6 +1343,8 @@ const registryObserver = new IntersectionObserver((entries) => {
   threshold: 0.3
 });
 registryObserver.observe(registrySection);
+
+let soundHandled = false;
 function handleSoundToggle(e) {
   if (e) e.preventDefault();
   if (soundHandled) return;
